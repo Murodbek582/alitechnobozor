@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="ALITECHNO - Zamonaviy texnika mahsulotlari onlayn do'koni. Kompyuterlar, noutbuklar, monitorlar va boshqa texnika mahsulotlari.">
+    <title>⚡ ALITECHNO — Texnika Do'koni</title>
+    <link rel="stylesheet" href="loyha4.css">
+</head>
+
+<body>
+    <!-- VIDEO BACKGROUND -->
+    <div class="video-bg-container">
+        <iframe id="bgVideo"
+            src="https://www.youtube.com/embed/XqARpKxTTwQ?autoplay=1&mute=1&loop=1&playlist=XqARpKxTTwQ&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1&disablekb=1"
+            frameborder="0" allow="autoplay; encrypted-media" tabindex="-1">
+        </iframe>
+        <div class="video-overlay"></div> <!-- For dimming the video -->
+    </div>
+
+    <div class="app">
+
+        <!-- ========== MAIN APP ========== -->
+        <div id="mainApp">
+
+            <!-- NAV -->
+            <nav>
+                <div class="logo" onclick="showPanel('shop')"><span>⚡</span> ALI TECNO</div>
+                <div class="nav-right">
+                    <button class="auth-btn" id="navAuthBtn" onclick="openAuthModal()">Kirish</button>
+                    <button class="cart-btn" id="themeToggle" onclick="toggleTheme()"
+                        title="Mavzuni o'zgartirish">🌙</button>
+                    <button class="cart-btn" onclick="toggleCart()">🛒<span class="cart-badge" id="cartBadge"
+                            style="display:none">0</span></button>
+                    <button class="mobile-menu-btn" onclick="toggleMobileNav()">☰</button>
+                </div>
+            </nav>
+
+            <!-- SUB-NAV -->
+            <div class="sub-nav">
+                <div class="sub-nav-container">
+                    <div class="nav-links">
+                        <button class="active" onclick="showPanel('shop')">🏠 Do'kon</button>
+                        <button onclick="showPanel('favorites')">❤️ Sevimlilar</button>
+                        <button onclick="showPanel('orders')">📦 Buyurtmalar</button>
+                        <button id="navAdminBtn" onclick="showPanel('admin')" style="display: none;">🔐 Admin</button>
+                    </div>
+                    <div class="sub-nav-right">
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" id="searchInput" placeholder="Mahsulot qidirish..."
+                                oninput="renderProducts()">
+                        </div>
+                        <select id="currencySelector" class="filters" onchange="changeCurrency(this.value)">
+                            <option value="UZS">🇺🇿 UZS - So'm</option>
+                            <option value="USD">🇺🇸 USD - Dollar</option>
+                            <option value="RUB">🇷🇺 RUB - Rubl</option>
+                        </select>
+                        <select id="sortFilter" class="filters" onchange="renderProducts()">
+                            <option value="default">Tartiblash</option>
+                            <option value="low">Arzon → Qimmat</option>
+                            <option value="high">Qimmat → Arzon</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- MOBILE NAV -->
+            <div class="mobile-nav" id="mobileNav">
+                <button id="mobileAuthBtn" onclick="openAuthModal()" style="color: var(--primary); font-weight: 700;">👤
+                    Kirish</button>
+                <button onclick="showPanel('shop')">🏠 Do'kon</button>
+                <button onclick="showPanel('favorites')">❤️ Sevimlilar</button>
+                <button onclick="showPanel('orders')">📦 Buyurtmalar</button>
+                <button id="mobileAdminBtn" onclick="showPanel('admin')" style="display: none;">🔐 Admin Panel</button>
+                <button onclick="closeMobileNav()" style="color:var(--danger)">✕ Yopish</button>
+            </div>
+
+
+
+            <!-- SHOP PANEL -->
+            <div class="panel active" id="shopPanel">
+                <div class="hero">
+                    <h1>Eng yaxshi <span>texnika</span> mahsulotlari</h1>
+                    <p>Sifatli kompyuterlar, noutbuklar va aksessuarlar — hammasini bir joydan toping</p>
+
+
+                </div>
+                <div class="categories" id="categories"></div>
+                <div class="products-grid" id="productsGrid"></div>
+            </div>
+
+            <!-- PRODUCT DETAIL PANEL -->
+            <div class="panel" id="productDetailPanel">
+                <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+                    <button class="btn-cancel" onclick="showPanel('shop')"
+                        style="margin-bottom: 2rem; width: auto; padding: 0.6rem 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600;">⬅
+                        Orqaga qaytish</button>
+
+                    <div class="product-detail-layout" id="pdLayout">
+                        <!-- Dynamic details rendered by JS -->
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="pd-reviews-section" style="margin-top: 3rem;">
+                        <h3
+                            style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem;">
+                            ⭐ Mahsulot izohlari va baholari</h3>
+
+                        <div
+                            style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow);">
+                            <h4 style="margin-bottom: 1rem; font-size: 1.1rem;">O'z fikringizni qoldiring</h4>
+                            <div class="stars"
+                                style="font-size: 2.2rem; margin-bottom: 1rem; cursor: pointer; display: flex; gap: 0.5rem;">
+                                <span id="pd-star-1" onclick="setPdReviewStars(1)"
+                                    style="transition: color 0.2s;">★</span>
+                                <span id="pd-star-2" onclick="setPdReviewStars(2)"
+                                    style="transition: color 0.2s;">★</span>
+                                <span id="pd-star-3" onclick="setPdReviewStars(3)"
+                                    style="transition: color 0.2s;">★</span>
+                                <span id="pd-star-4" onclick="setPdReviewStars(4)"
+                                    style="transition: color 0.2s;">★</span>
+                                <span id="pd-star-5" onclick="setPdReviewStars(5)"
+                                    style="transition: color 0.2s;">★</span>
+                            </div>
+                            <textarea id="pdReviewText" placeholder="Ushbu mahsulot haqida nima deysiz?"
+                                style="width: 100%; height: 100px; border-radius: 12px; border: 1.5px solid var(--border); padding: 1rem; font-family: inherit; font-size: 0.95rem; resize: none; margin-bottom: 1.5rem; background: rgba(108,92,231,0.02); color: var(--text); outline: none; transition: border-color 0.3s;"></textarea>
+                            <button class="buy-btn" style="width: auto; padding: 0.8rem 2.5rem; font-size: 1rem;"
+                                onclick="submitPdReview()">Yuborish</button>
+                        </div>
+
+                        <div id="pdReviewsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN PANEL -->
+            <div class="panel" id="adminPanel">
+                <!-- ADMIN CONTENT -->
+                <div id="adminContent">
+                    <div class="panel-header">
+                        <h2>🔐 Admin Panel</h2>
+                        <div style="display:flex;align-items:center;gap:1rem">
+                            <button class="add-btn" onclick="openAddProduct()">+ Yangi mahsulot</button>
+                        </div>
+                    </div>
+
+                    <div class="auth-tabs" style="margin-bottom:2rem; max-width:600px;">
+                        <button class="auth-tab active" id="adminTabProdBtn" onclick="switchAdminTab('products')">📦
+                            Mahsulotlar</button>
+                        <button class="auth-tab" id="adminTabUsersBtn" onclick="switchAdminTab('users')">👤
+                            Mijozlar & Tarix</button>
+                        <button class="auth-tab" id="adminTabReviewsBtn" onclick="switchAdminTab('reviews')">⭐
+                            Izohlar</button>
+                    </div>
+
+                    <div id="adminProductsSection">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rasm</th>
+                                        <th>Nomi</th>
+                                        <th>Kategoriya</th>
+                                        <th>Narxi</th>
+                                        <th>Amallar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+                    <div id="adminUsersSection" style="display:none">
+                        <div class="panel-header"
+                            style="margin-top: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                            <h3>Foydalanuvchilar ro'yxati va Tarix</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <h4 style="margin-bottom: 1rem;">Mijozlar</h4>
+                                <div class="data-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Ism</th>
+                                                <th>Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="adminUsersTable"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 1rem;">So'nggi harakatlar</h4>
+                                <div id="adminLogList"
+                                    style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; max-height: 400px; overflow-y: auto; text-align: left;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="adminReviewsSection" style="display:none">
+                        <div class="panel-header"
+                            style="margin-top: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                            <h3>Foydalanuvchilar izohlari va baholari</h3>
+                        </div>
+                        <div id="adminReviewsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAVORITES PANEL -->
+            <div class="panel" id="favoritesPanel">
+                <div class="hero">
+                    <h1>❤️ Siz yoqtirgan <span>mahsulotlar</span></h1>
+                    <p>Sevimlilar ro'yxatiga qo'shilgan mahsulotlaringiz</p>
+                </div>
+                <div class="products-grid" id="favoritesGrid"></div>
+            </div>
+
+            <!-- ORDERS PANEL -->
+            <div class="panel" id="ordersPanel">
+                <div class="panel-header">
+                    <h2>� Buyurtmalar</h2>
+                </div>
+                <div id="ordersList"></div>
+            </div>
+
+            <!-- CART OVERLAY -->
+            <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+            <div class="cart-sidebar" id="cartSidebar">
+                <div class="cart-header">
+                    <h2>🛒 Savat</h2><button class="close-cart" onclick="toggleCart()">✕</button>
+                </div>
+                <div class="cart-items" id="cartItems"></div>
+                <div class="cart-total">
+                    <div class="total"><span>Jami:</span><span class="amount" id="cartTotalAmount">0 so'm</span></div>
+                    <button class="checkout-btn" onclick="checkout()">✅ Buyurtma berish</button>
+                </div>
+            </div>
+
+            <!-- PRODUCT MODAL -->
+            <div class="modal-overlay" id="productModal">
+                <div class="modal">
+                    <h3 id="modalTitle">Yangi mahsulot</h3>
+                    <form id="prodForm" onsubmit="event.preventDefault();saveProduct()">
+                        <div class="form-group"><label>Nomi</label><input id="prodName" required
+                                placeholder="Mahsulot nomi"></div>
+                        <div class="form-group"><label>Kategoriya</label>
+                            <select id="prodCat">
+                                <option>Kompyuterlar</option>
+                                <option>Noutbuklar</option>
+                                <option>Monitorlar</option>
+                                <option>Naushniklar</option>
+                                <option>Sichqonchalar</option>
+                                <option>Kreslolar</option>
+                                <option>Aksessuarlar</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Narxi (so'm)</label><input id="prodPrice" type="number" required
+                                placeholder="0"></div>
+                        <div class="form-group"><label>Tavsifi</label><textarea id="prodDesc"
+                                placeholder="Qisqa tavsif"></textarea></div>
+                        <div class="form-group">
+                            <label>Rasm fayli (Galereyadan tanlang)</label>
+                            <input id="prodImgFile" type="file" accept="image/*" onchange="previewProdImage(this)">
+                            <input type="hidden" id="prodImgBase64">
+                            <div id="prodImgPreview" style="margin-top: 10px; text-align: center; display: none;">
+                                <img src=""
+                                    style="max-height: 120px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                            </div>
+                        </div>
+                        <div class="form-actions"><button type="button" class="btn-cancel"
+                                onclick="closeModal('productModal')">Bekor qilish</button><button type="submit"
+                                class="btn-save">💾 Saqlash</button></div>
+                    </form>
+                </div>
+            </div>
+
+
+
+            <!-- CHECKOUT MODAL -->
+            <div class="modal-overlay" id="checkoutModal">
+                <div class="modal checkout-modal">
+                    <div class="checkout-header">
+                        <div class="checkout-icon">💳</div>
+                        <h3>To'lov ma'lumotlari</h3>
+                        <p class="checkout-subtitle">Plastik karta orqali xavfsiz to'lov</p>
+                    </div>
+
+                    <form id="checkoutForm" onsubmit="event.preventDefault();processCheckout()">
+                        <!-- Card Info -->
+                        <div class="checkout-section">
+                            <div class="section-label">💳 Karta ma'lumotlari</div>
+                            <div class="form-group">
+                                <label>Karta raqami</label>
+                                <input id="cardNumber" type="text" required placeholder="0000 0000 0000 0000"
+                                    maxlength="19" oninput="formatCardNumber(this)">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Amal qilish muddati</label>
+                                    <input id="cardExpiry" type="text" required placeholder="MM/YY" maxlength="5"
+                                        oninput="formatExpiry(this)">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <div class="pw-wrapper">
+                                        <input id="cardCVV" type="password" required placeholder="•••" maxlength="3">
+                                        <button type="button" class="pw-eye-btn" onclick="togglePw('cardCVV', this)"
+                                            title="Ko'rsatish">👁</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Karta egasining ismi</label>
+                                <input id="cardHolder" type="text" required placeholder="XXXXXXX XXXXXXX"
+                                    style="text-transform:uppercase">
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="checkout-section">
+                            <div class="section-label">📞 Aloqa ma'lumotlari</div>
+                            <div class="form-group">
+                                <label>Telefon raqami</label>
+                                <input id="checkoutPhone" type="tel" required placeholder="+998 XX XXX XX XX">
+                            </div>
+                            <div class="form-group">
+                                <label>Qo'shimcha telefon</label>
+                                <input id="checkoutPhone2" type="tel" placeholder="+998 XX XXX XX XX (ixtiyoriy)">
+                            </div>
+                        </div>
+
+                        <!-- Delivery Info -->
+                        <div class="checkout-section">
+                            <div class="section-label">📍 Yetkazib berish manzili</div>
+                            <div class="form-group">
+                                <label>Shahar / Viloyat</label>
+                                <select id="checkoutCity" required>
+                                    <option value="">Tanlang...</option>
+                                    <option>Toshkent shahri</option>
+                                    <option>Toshkent viloyati</option>
+                                    <option>Samarqand</option>
+                                    <option>Buxoro</option>
+                                    <option>Namangan</option>
+                                    <option>Andijon</option>
+                                    <option>Farg'ona</option>
+                                    <option>Qashqadaryo</option>
+                                    <option>Surxondaryo</option>
+                                    <option>Navoiy</option>
+                                    <option>Xorazm</option>
+                                    <option>Jizzax</option>
+                                    <option>Sirdaryo</option>
+                                    <option>Qoraqalpog'iston</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>To'liq manzil</label>
+                                <textarea id="checkoutAddress" required
+                                    placeholder="Ko'cha, uy raqami, xonadon..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Payment Type -->
+                        <div class="checkout-section">
+                            <div class="section-label">💳 To'lov usuli</div>
+                            <div class="form-group">
+                                <label>To'lov turini tanlang</label>
+                                <select id="checkoutPaymentType" required onchange="toggleDownpaymentInput(); updateCheckoutSummary()">
+                                    <option value="full">To'liq to'lov</option>
+                                    <option value="installment">Nasiya (Muddatli to'lov)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="downpaymentGroup" style="display:none; margin-top:1rem;">
+                                <label>Boshlang'ich to'lovni kiriting (Eng kamida umumiy summaning 20% bo'lishi kerak):</label>
+                                <div style="display:flex; align-items:center; gap:0.5rem;">
+                                    <input type="number" id="installmentDownpayment" placeholder="Masalan: 3000000" oninput="updateCheckoutSummary()" style="flex:1;">
+                                    <strong style="color:var(--text2); min-width: 60px;">so'm</strong>
+                                </div>
+                                <div id="downpaymentError" style="color:var(--danger); font-size:0.8rem; margin-top:4px; display:none;">Boshlang'ich to'lov yetarli emas!</div>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="checkout-summary" id="checkoutSummary"></div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="closeModal('checkoutModal')">⬅
+                                Orqaga</button>
+                            <button type="submit" class="btn-pay">💳 To'lov qilish</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- AUTH MODAL -->
+            <div class="modal-overlay" id="authModal">
+                <div class="modal auth-modal" style="max-width: 400px; text-align: center; position: relative;">
+                    <button type="button" class="close-cart" onclick="closeModal('authModal')"
+                        style="position: absolute; top: 1rem; right: 1rem; margin: 0;">✕</button>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">👋</div>
+                    <h2 id="authModalTitle"
+                        style="font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+                        Tizimga kirish</h2>
+                    <p style="color: var(--text2); margin-bottom: 2rem; font-size: 0.95rem;" id="authModalSubtitle">
+                        Xarid qilish uchun tizimga kiring</p>
+
+                    <form id="authForm" onsubmit="event.preventDefault(); processAuth()">
+                        <div class="form-group" id="regNameGroup" style="display: none; text-align: left;">
+                            <label>Ismingiz</label>
+                            <input type="text" id="authName" placeholder="To'liq ismingiz">
+                        </div>
+                        <div class="form-group" style="text-align: left;">
+                            <label>Email manzil</label>
+                            <input type="email" id="authEmail" required placeholder="Sizning emailingiz">
+                        </div>
+                        <div class="form-group" style="text-align: left;">
+                            <label>Parol</label>
+                            <div class="pw-wrapper">
+                                <input type="password" id="authPassword" required placeholder="Maxfiy parol">
+                                <button type="button" class="pw-eye-btn" onclick="togglePw('authPassword', this)"
+                                    title="Parolni ko'rsatish">👁</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="buy-btn" id="authSubmitBtn"
+                            style="margin-top: 1rem; padding: 1rem; font-size: 1rem;">Kirish</button>
+                    </form>
+
+                    <div style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text2);">
+                        <span id="authSwitchText">Hali o'z akkauntingiz yo'qmi?</span>
+                        <span style="color: var(--primary); font-weight: 700; cursor: pointer; transition: all 0.3s;"
+                            onmouseover="this.style.textDecoration='underline'"
+                            onmouseout="this.style.textDecoration='none'" onclick="toggleAuthMode()"
+                            id="authSwitchBtn">Ro'yxatdan o'tish</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE MODAL -->
+            <div class="modal-overlay" id="profileModal">
+                <div class="modal auth-modal" style="max-width: 500px; text-align: left; position: relative;">
+                    <div class="cart-header">
+                        <h2 style="font-size: 1.5rem; color: var(--text);">👤 Mening Profilim</h2>
+                        <button class="close-cart" onclick="closeModal('profileModal')">✕</button>
+                    </div>
+
+                    <div class="profile-card"
+                        style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; padding: 1rem; background: rgba(108, 92, 231, 0.04); border-radius: 14px;">
+                        <img id="profileAvatar" src="" alt="Avatar"
+                            style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: var(--bg3);"
+                            onerror="this.src='https://ui-avatars.com/api/?name=User&background=random'">
+                        <div style="flex: 1;">
+                            <h3 id="profileNameDisplay" style="margin-bottom: 0.2rem; font-size: 1.1rem;">Ism</h3>
+                            <div style="color: var(--text2); font-size: 0.85rem;" id="profileEmailDisplay">
+                                email@gmail.com</div>
+                        </div>
+                    </div>
+
+                    <div class="auth-tabs" style="margin-bottom:1.5rem; max-width:100%;">
+                        <button class="auth-tab active" id="profTabInfoBtn" onclick="switchProfTab('info')">⚙️
+                            Sozlamalar</button>
+                        <button class="auth-tab" id="profTabOrdersBtn" onclick="switchProfTab('orders')">📦
+                            Xaridlarim</button>
+                    </div>
+
+                    <div id="profInfoSection">
+                        <form id="profileForm" onsubmit="event.preventDefault(); saveProfile()">
+                            <div class="form-group" style="text-align: left;">
+                                <label>Ism</label>
+                                <input type="text" id="profNameInput" required>
+                            </div>
+                            <button type="submit" class="buy-btn"
+                                style="margin-top: 1rem; font-size: 0.95rem; padding: 0.8rem;">💾 Saqlash</button>
+                        </form>
+                    </div>
+
+                    <div id="profOrdersSection"
+                        style="display: none; max-height: 300px; overflow-y: auto; padding-right: 0.5rem;">
+                        <div id="userOrdersList">
+                            <!-- User's orders will be rendered here -->
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 2rem; display: flex; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+                        <button type="button" class="btn-cancel"
+                            style="flex: 1; padding: 0.8rem; height: auto; text-align: center;"
+                            onclick="closeModal('profileModal')">⬅ Orqaga</button>
+                        <button type="button" class="btn-cancel"
+                            style="flex: 1; padding: 0.8rem; height: auto; text-align: center; background: rgba(231, 76, 60, 0.1); color: var(--danger); border-color: rgba(231, 76, 60, 0.2);"
+                            onclick="logoutUser()">🚪 Tizimdan chiqish</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REVIEW MODAL -->
+            <div class="modal-overlay" id="reviewModal">
+                <div class="modal auth-modal" style="max-width: 400px; text-align: center; position: relative;">
+                    <button type="button" class="close-cart" onclick="closeModal('reviewModal')"
+                        style="position: absolute; top: 1rem; right: 1rem; margin: 0;">✕</button>
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">⭐</div>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Fikringizni qoldiring</h2>
+                    <p style="color: var(--text2); margin-bottom: 1.5rem; font-size: 0.95rem;">Xaridingiz haqida izoh
+                        yozing</p>
+
+                    <div class="stars"
+                        style="font-size: 2.5rem; margin-bottom: 1rem; cursor: pointer; display: flex; justify-content: center; gap: 0.5rem;">
+                        <span id="star-1" onclick="setReviewStars(1)" style="transition: color 0.2s;">★</span>
+                        <span id="star-2" onclick="setReviewStars(2)" style="transition: color 0.2s;">★</span>
+                        <span id="star-3" onclick="setReviewStars(3)" style="transition: color 0.2s;">★</span>
+                        <span id="star-4" onclick="setReviewStars(4)" style="transition: color 0.2s;">★</span>
+                        <span id="star-5" onclick="setReviewStars(5)" style="transition: color 0.2s;">★</span>
+                    </div>
+
+                    <textarea id="reviewText" placeholder="Mahsulot va xizmat haqida fikringiz..."
+                        style="width: 100%; height: 100px; border-radius: 12px; border: 1.5px solid var(--border); padding: 1rem; font-family: inherit; font-size: 0.9rem; resize: none; margin-bottom: 1rem; background: rgba(108,92,231,0.02); color: var(--text); outline: none; transition: border-color 0.3s;"></textarea>
+
+                    <button class="buy-btn" onclick="submitReview()">Yuborish</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- end mainApp -->
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3 class="footer-logo"><span>⚡</span> ALIMARKET</h3>
+                    <p>Zamonaviy texnika va elektronika mahsulotlari do'koni. Oliy sifat va ishonchli xizmat.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>📍 Manzil</h3>
+                    <p>Xorazm viloyati, Tuproqqal'a tumani</p>
+                    <p>Mo'ljal: Drujba</p>
+                </div>
+                <div class="footer-col">
+                    <h3>📞 Aloqa</h3>
+                    <p>Telefon: <a href="tel:+998977914999">+998 97 791 49 99</a></p>
+                    <p>Email: <a href="mailto:info@alimarket.uz">info@alimarket.uz</a></p>
+                </div>
+                <div class="footer-col">
+                    <h3>🌐 Tarmoqlar</h3>
+                    <div class="footer-socials">
+                        <a href="https://t.me/" target="_blank" class="social-btn">📱 Telegram</a>
+                        <a href="https://instagram.com/" target="_blank" class="social-btn">📸 Instagram</a>
+                        <a href="https://facebook.com/" target="_blank" class="social-btn">📘 Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ALIMARKET. Barcha huquqlar himoyalangan.</p>
+            </div>
+        </footer>
+
+        <!-- TOAST -->
+        <div class="toast" id="toast"></div>
+    </div>
+    <script src="loyha4.js"></script>
+</body>
+
+</html>
